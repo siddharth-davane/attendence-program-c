@@ -10,3 +10,4 @@ An program to Quickly take attendance and save it to a file.
 * Jump to a random roll number
 * Save data to a file 
 * Exiting early causes unassigned rollnumbers to be ignored in output
+* Can tell difference between unassigned vs absent
