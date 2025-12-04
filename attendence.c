@@ -20,7 +20,7 @@ int main(){
       break;
     }
     else if (command == 'j' || command =='J'){
-      printf("Enter Roll.no to jump to :");
+      printf("\nEnter Roll.no to jump to :");
       scanf("%d",&jump_no);
       current_rollno=jump_no -1; //-1 for index correction
     }
@@ -54,8 +54,8 @@ int main(){
       printf("Roll no %d: Absent\n", current_rollno+1);
     }
     else{
-      // keep invalid rollnumbers in output
-      printf("Roll no %d: Undefined/Error/unassigned\n", current_rollno+1);
+      // keep rollnumbers with invalid or unassigned state in output
+      printf("Roll no %d: unassigned\n", current_rollno+1);
     }
   }
 
