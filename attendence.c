@@ -1,6 +1,17 @@
 #include<stdio.h>
 
-int detectUnassignedNums(short int array[], int checkUpto);
+int detectUnassignedRollNumbers(short int presenty[], int checkUpto);
+
+void outputList(short int presenty[], int outUpto);
+void outputTablePresent(short int presenty[], int outUpto);
+void outputTableAbsent(short int presenty[], int outUpto);
+void outputTableUnassigned(short int presenty[], int outUpto);
+
+void fOutputList(short int presenty[], int outUpto);
+void fOutputTable(short int presenty[], int outUpto);
+void fOutputTableAbsent(short int presenty[], int outUpto);
+void fOutputTableUnassigned(short int presenty[], int outUpto);
+
 
 int main(){
   printf("Attendance Counter V1.2\ncontrols:\ny: Present\nn: Absent\n");
@@ -50,7 +61,7 @@ int main(){
   scanf("%d",&outputFormat);
   
 
-  invalidRollNumbersFound = detectUnassignedNums(presenty, highest_rollno_reached);
+  invalidRollNumbersFound = detectUnassignedRollNumbers(presenty, highest_rollno_reached);
 
 
   // Output Printing logic
@@ -58,79 +69,36 @@ int main(){
 
   switch(outputFormat){
     case 1:
-    //list format
-    for(current_rollno=0; current_rollno<=highest_rollno_reached; current_rollno++){
-      if(presenty[current_rollno] == 1){
-        printf("Roll no %d: Present\n", current_rollno+1);
-      }
-      else if(presenty[current_rollno] == 2) {
-        printf("Roll no %d: Absent\n", current_rollno+1);
-      }
-      else{
-        // keep rollnumbers with invalid or unassigned state in output
-        printf("Roll no %d: invalid\n", current_rollno+1);
-      }
-    }
-    break;
-    //end of list format
+      outputList(presenty, highest_rollno_reached);
+      break;
 
     case 2:
+      outputTablePresent(presenty, highest_rollno_reached);
+      break;
+
     case 3:
-    // Table Format
-    printf("\n|Present:------------------------|\n| ");
-    for(current_rollno=0; current_rollno<=highest_rollno_reached; current_rollno++){
-      if(presenty[current_rollno] ==1){
-        printf(" %2d", current_rollno+1);
-      }
-      else{printf("   ");}
-      if((current_rollno+1)%10==0){
-        printf(" |\n| "); //newline every 10 numbers
-      }
-    }
+      outputTablePresent(presenty, highest_rollno_reached);
+      outputTableAbsent(presenty, highest_rollno_reached);
 
-    if(outputFormat==2)
-      break;//end of group (present only) format
-
-    // Table (All) Format, extends format 2
-    printf("\n|Absent:-------------------------|\n| ");
-    for(current_rollno=0; current_rollno<=highest_rollno_reached; current_rollno++){
-      if(presenty[current_rollno] ==2){
-        printf(" %2d", current_rollno+1);
-      }
-      else{printf("   ");}
-      if((current_rollno+1)%10==0){
-        printf(" |\n| "); //newline every 10 numbers
-      }
-    }
-    if(invalidRollNumbersFound==1){
-      printf("\n|Unassigned:---------------------|\n| ");
-      for(current_rollno=0; current_rollno<=highest_rollno_reached; current_rollno++){
-        if(presenty[current_rollno] !=1 && presenty[current_rollno] !=2){
-          printf(" %2d", current_rollno+1);
-        }
-        else{printf("   ");}
-        if((current_rollno+1)%10==0){
-          printf(" |\n| "); //newline every 10 numbers
-        }
-      }
-    }
-    printf("\n");//newline after output ends
-
-    break;
+      if(invalidRollNumbersFound==1)
+        outputTableUnassigned(presenty, highest_rollno_reached);
+      break;
 
     default:
       printf("\nInvalid output format, no output generated");
   }
   if(invalidRollNumbersFound==1)
-    printf("WARNING: Found invalid roll numbers\n");
+    printf("\nWARNING: Found invalid roll numbers\n");
 
 
 
   printf("\nSave this output to Disk? (y/n):");
   scanf(" %c",&saveToDisk);
+
   //Write to file if asked to.
   //this is just same of the above program
   //just replaced printf to file output
+
   if(saveToDisk=='y'||saveToDisk=='Y'){
     printf("\nEnter file name:");
     scanf("%127s",filename);
@@ -217,7 +185,7 @@ int main(){
   return 0;
 }
 
-int detectUnassignedNums(short int array[], int checkUpto){
+int detectUnassignedRollNumbers(short int array[], int checkUpto){
   int i;
   for(i=0;i<=checkUpto;i++){
     if(array[i] != 1 && array[i] !=2){
@@ -229,3 +197,67 @@ int detectUnassignedNums(short int array[], int checkUpto){
 }
 
 
+
+void outputList(short int presenty[], int outUpto){
+  //list format
+  for(int current_rollno=0; current_rollno<=outUpto; current_rollno++){
+    if(presenty[current_rollno] == 1){
+      printf("Roll no %d: Present\n", current_rollno+1);
+    }
+    else if(presenty[current_rollno] == 2) {
+      printf("Roll no %d: Absent\n", current_rollno+1);
+    }
+    else{
+      // keep rollnumbers with invalid or unassigned state in output
+      printf("Roll no %d: invalid\n", current_rollno+1);
+    }
+  }
+}
+void outputTablePresent(short int presenty[], int outUpto){
+
+  // Table Format
+  printf("\n|Present:------------------------|\n| ");
+  for(int current_rollno=0; current_rollno<=outUpto; current_rollno++){
+    if(presenty[current_rollno] ==1){
+      printf(" %2d", current_rollno+1);
+    }
+    else{printf("   ");}
+    if((current_rollno+1)%10==0){
+      printf(" |\n| "); //newline every 10 numbers
+    }
+  }
+
+}
+
+void outputTableAbsent(short int presenty[], int outUpto){
+
+  // Table (All) Format, extends format 2
+  printf("\n|Absent:-------------------------|\n| ");
+  for(int current_rollno=0; current_rollno<=outUpto; current_rollno++){
+    if(presenty[current_rollno] ==2){
+      printf(" %2d", current_rollno+1);
+    }
+    else{printf("   ");}
+    if((current_rollno+1)%10==0){
+      printf(" |\n| "); //newline every 10 numbers
+    }
+  }
+  printf("\n");//newline after output ends
+}
+
+void outputTableUnassigned(short int presenty[], int outUpto){
+
+  printf("\n|Unassigned:---------------------|\n| ");
+  for(int current_rollno=0; current_rollno<=outUpto; current_rollno++){
+    if(presenty[current_rollno] !=1 && presenty[current_rollno] !=2){
+      printf(" %2d", current_rollno+1);
+    }
+    else{printf("   ");}
+    if((current_rollno+1)%10==0){
+      printf(" |\n| "); //newline every 10 numbers
+    }
+  }
+}
+void fOutputList(short int presenty[], int outUpto);
+void fOutputTable(short int presenty[], int outUpto);
+void fOutputTableAll(short int presenty[], int outUpto);
