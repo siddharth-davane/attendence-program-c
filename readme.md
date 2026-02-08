@@ -1,5 +1,5 @@
 # Quick Attendance Program
-`*******  Release : V1.2  ********
+`*******  Release : V1.2.1  ********
 
 An program to Quickly take attendance by roll numbers
 
@@ -30,3 +30,5 @@ This C program is designed to take upto 100 numbers, after which it outputs the 
 * Fixed invalid presenty being ignored in format 3 (Table - All)
 * Added Basic style improvements in "Table" formats
 
+### V1.2.1
+* Code refactoring completed, moved large parts to modular functions
