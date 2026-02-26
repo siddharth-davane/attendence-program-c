@@ -17,7 +17,7 @@ int main(){
   int jump_no, highest_rollno_reached=0, current_rollno = 0, outputFormat, invalidRollNumbersFound = 0;
   char command, saveToDisk, filename[128];
 
-
+start_counting:
   while (current_rollno<=MAX_PRESENTY){
     printf("\nIs Roll.no %d present?: ",current_rollno+1);
     scanf(" %c", &command);// space before %c tells scanf to ignore whitespace
@@ -82,8 +82,14 @@ int main(){
     default:
       printf("\nInvalid output format, no output generated");
   }
-  if(invalidRollNumbersFound==1)
+  if(invalidRollNumbersFound==1){
     printf("\nWARNING: Found invalid roll numbers\n");
+  }
+    printf("Do you want to edit Attendence?(y/n):");
+    scanf(" %c", &command);// space before %c tells scanf to ignore whitespace
+    if(command == 'y' || command == 'Y')
+      goto start_counting;
+    
 
 
 
@@ -91,8 +97,6 @@ int main(){
   scanf(" %c",&saveToDisk);
 
   //Write to file if asked to.
-  //this is just same of the above program
-  //just replaced printf to file output
 
   if(saveToDisk=='y'||saveToDisk=='Y'){
     printf("\nEnter file name:");
@@ -147,7 +151,6 @@ void outputList(FILE* outfile, short int presenty[], int outUpto){
       fprintf(outfile, "Roll no %d: Absent\n", current_rollno+1);
     }
     else{
-      // keep rollnumbers with invalid or unassigned state in output
       fprintf(outfile, "Roll no %d: invalid\n", current_rollno+1);
     }
   }
