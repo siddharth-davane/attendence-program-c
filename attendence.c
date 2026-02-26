@@ -2,19 +2,14 @@
 
 int detectUnassignedRollNumbers(short int presenty[], int checkUpto);
 
-void outputList(short int presenty[], int outUpto);
-void outputTablePresent(short int presenty[], int outUpto);
-void outputTableAbsent(short int presenty[], int outUpto);
-void outputTableUnassigned(short int presenty[], int outUpto);
-
-void fOutputList(char filename[], short int presenty[], int outUpto);
-void fOutputTablePresent(char filename[], short int presenty[], int outUpto);
-void fOutputTableAbsent(char filename[], short int presenty[], int outUpto);
-void fOutputTableUnassigned(char filename[], short int presenty[], int outUpto);
+void outputList(FILE* outfile, short int presenty[], int outUpto);
+void outputTablePresent(FILE* outfile, short int presenty[], int outUpto);
+void outputTableAbsent(FILE* outfile, short int presenty[], int outUpto);
+void outputTableUnassigned(FILE* outfile, short int presenty[], int outUpto);
 
 
 int main(){
-  printf("Attendance Counter V1.2.1\ncontrols:\ny: Present\nn: Absent\n");
+  printf("Attendance Counter V1.2.2\ncontrols:\ny: Present\nn: Absent\n");
   printf("j/J: jump to roll.no\n!: Finish\n Max students: 100");
 
   short int presenty[100] ={0};// fill array with 0, removes old unknown values in the memory
@@ -69,19 +64,19 @@ int main(){
 
   switch(outputFormat){
     case 1:
-      outputList(presenty, highest_rollno_reached);
+      outputList(stdout,presenty, highest_rollno_reached);
       break;
 
     case 2:
-      outputTablePresent(presenty, highest_rollno_reached);
+      outputTablePresent(stdout,presenty, highest_rollno_reached);
       break;
 
     case 3:
-      outputTablePresent(presenty, highest_rollno_reached);
-      outputTableAbsent(presenty, highest_rollno_reached);
+      outputTablePresent(stdout,presenty, highest_rollno_reached);
+      outputTableAbsent(stdout,presenty, highest_rollno_reached);
 
       if(invalidRollNumbersFound==1)
-        outputTableUnassigned(presenty, highest_rollno_reached);
+        outputTableUnassigned(stdout,presenty, highest_rollno_reached);
       break;
 
     default:
@@ -102,30 +97,32 @@ int main(){
   if(saveToDisk=='y'||saveToDisk=='Y'){
     printf("\nEnter file name:");
     scanf("%127s",filename);
+    
+    FILE* outputFile;
+    outputFile = fopen(filename,"w");
 
-  switch(outputFormat){
-    case 1:
-      fOutputList(filename, presenty, highest_rollno_reached);
-      break;
+    switch(outputFormat){
+      case 1:
+        outputList(outputFile, presenty, highest_rollno_reached);
+        break;
 
-    case 2:
-      fOutputTablePresent(filename, presenty, highest_rollno_reached);
-      break;
+      case 2:
+        outputTablePresent(outputFile, presenty, highest_rollno_reached);
+        break;
 
-    case 3:
-      fOutputTablePresent(filename, presenty, highest_rollno_reached);
-      fOutputTableAbsent(filename, presenty, highest_rollno_reached);
+      case 3:
+        outputTablePresent(outputFile, presenty, highest_rollno_reached);
+        outputTableAbsent(outputFile, presenty, highest_rollno_reached);
 
-      if(invalidRollNumbersFound==1)
-        fOutputTableUnassigned(filename, presenty, highest_rollno_reached);
+        if(invalidRollNumbersFound==1)
+          outputTableUnassigned(outputFile, presenty, highest_rollno_reached);
+        break;
 
-      break;
-
-    default:
-    printf("Save Failed! Bad output Format");
+      default:
+      printf("Save Failed! Bad output Format");
+    }
+    fclose(outputFile);
   }
-  }
-
   return 0;
 }
 
@@ -140,70 +137,8 @@ int detectUnassignedRollNumbers(short int array[], int checkUpto){
   return 0;
 }
 
-
-
-void outputList(short int presenty[], int outUpto){
-  for(int current_rollno=0; current_rollno<=outUpto; current_rollno++){
-    if(presenty[current_rollno] == 1){
-      printf("Roll no %d: Present\n", current_rollno+1);
-    }
-    else if(presenty[current_rollno] == 2) {
-      printf("Roll no %d: Absent\n", current_rollno+1);
-    }
-    else{
-      // keep rollnumbers with invalid or unassigned state in output
-      printf("Roll no %d: invalid\n", current_rollno+1);
-    }
-  }
-}
-void outputTablePresent(short int presenty[], int outUpto){
-
-  printf("\n|Present:------------------------|\n| ");
-  for(int current_rollno=0; current_rollno<=outUpto; current_rollno++){
-    if(presenty[current_rollno] ==1){
-      printf(" %2d", current_rollno+1);
-    }
-    else{printf("   ");}
-    if((current_rollno+1)%10==0){
-      printf(" |\n| "); //newline every 10 numbers
-    }
-  }
-
-}
-
-void outputTableAbsent(short int presenty[], int outUpto){
-
-  printf("\n|Absent:-------------------------|\n| ");
-  for(int current_rollno=0; current_rollno<=outUpto; current_rollno++){
-    if(presenty[current_rollno] ==2){
-      printf(" %2d", current_rollno+1);
-    }
-    else{printf("   ");}
-    if((current_rollno+1)%10==0){
-      printf(" |\n| "); //newline every 10 numbers
-    }
-  }
-  printf("\n");//newline after output ends, for "unassigned numbers" table
-}
-
-void outputTableUnassigned(short int presenty[], int outUpto){
-
-  printf("\n|Unassigned:---------------------|\n| ");
-  for(int current_rollno=0; current_rollno<=outUpto; current_rollno++){
-    if(presenty[current_rollno] !=1 && presenty[current_rollno] !=2){
-      printf(" %2d", current_rollno+1);
-    }
-    else{printf("   ");}
-    if((current_rollno+1)%10==0){
-      printf(" |\n| "); //newline every 10 numbers
-    }
-  }
-}
-
-void fOutputList(char filename[], short int presenty[], int outUpto){
+void outputList(FILE* outfile, short int presenty[], int outUpto){
   
-  FILE* outfile;
-  outfile = fopen(filename,"w");
   for(int current_rollno=0; current_rollno<=outUpto; current_rollno++){
     if(presenty[current_rollno] == 1){
       fprintf(outfile, "Roll no %d: Present\n", current_rollno+1);
@@ -216,13 +151,10 @@ void fOutputList(char filename[], short int presenty[], int outUpto){
       fprintf(outfile, "Roll no %d: invalid\n", current_rollno+1);
     }
   }
-  fclose(outfile);
 }
 
-void fOutputTablePresent(char filename[], short int presenty[], int outUpto){
+void outputTablePresent(FILE* outfile, short int presenty[], int outUpto){
 
-  FILE* outfile;
-  outfile = fopen(filename,"w");
   fprintf(outfile, "\n|Present:------------------------|\n| ");
   for(int current_rollno=0; current_rollno<=outUpto; current_rollno++){
     if(presenty[current_rollno] ==1){
@@ -233,13 +165,9 @@ void fOutputTablePresent(char filename[], short int presenty[], int outUpto){
       fprintf(outfile, " |\n| "); //newline every 10 numbers
     }
   }
-
-  fclose(outfile);
 }
-void fOutputTableAbsent(char filename[], short int presenty[], int outUpto){
+void outputTableAbsent(FILE* outfile, short int presenty[], int outUpto){
 
-  FILE* outfile;
-  outfile = fopen(filename,"a");
   fprintf(outfile, "\n|Absent:-------------------------|\n| ");
   for(int current_rollno=0; current_rollno<=outUpto; current_rollno++){
     if(presenty[current_rollno] ==2){
@@ -250,12 +178,9 @@ void fOutputTableAbsent(char filename[], short int presenty[], int outUpto){
       fprintf(outfile, " |\n| "); //newline every 10 numbers
     }
   }
-  fclose(outfile);
 }
-void fOutputTableUnassigned(char filename[], short int presenty[], int outUpto){
+void outputTableUnassigned(FILE* outfile, short int presenty[], int outUpto){
 
-  FILE* outfile;
-  outfile = fopen(filename,"a");
   fprintf(outfile, "\n|Unassigned:---------------------|\n| ");
   for(int current_rollno=0; current_rollno<=outUpto; current_rollno++){
     if(presenty[current_rollno] !=1 && presenty[current_rollno] !=2){
@@ -266,6 +191,5 @@ void fOutputTableUnassigned(char filename[], short int presenty[], int outUpto){
       fprintf(outfile, " |\n| "); //newline every 10 numbers
     }
   }
-  fclose(outfile);
 }
 
